@@ -173,17 +173,14 @@ public class EventServiceImpl implements EventService {
         List<Request> requests = requestRepository.findAllById(request.getRequestIds());
         if (request.getStatus().equals(RequestStatus.REJECTED)) {
             checkRequestsStatus(requests);
-            requests.stream()
-                    .map(tmpReq -> changeStatus(tmpReq, RequestStatus.REJECTED))
-                    .collect(Collectors.toList());
+            requests.forEach(tmpReq -> changeStatus(tmpReq, RequestStatus.REJECTED));
             requestRepository.saveAll(requests);
             response.setRejectedRequests(RequestMapper.INSTANCE.mapListRequests(requests));
         } else {
-            if (requests.size() + event.getConfirmedRequests() > event.getParticipantLimit())
+            if (requests.size() + event.getConfirmedRequests() > event.getParticipantLimit()) {
                 throw new ConflictException("Превышен лимит заявок");
-            requests.stream()
-                    .map(tmpReq -> changeStatus(tmpReq, RequestStatus.CONFIRMED))
-                    .collect(Collectors.toList());
+            }
+            requests.forEach(tmpReq -> changeStatus(tmpReq, RequestStatus.CONFIRMED));
             requestRepository.saveAll(requests);
             event.setConfirmedRequests(event.getConfirmedRequests() + requests.size());
             repository.save(event);

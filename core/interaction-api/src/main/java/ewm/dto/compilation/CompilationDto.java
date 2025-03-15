@@ -1,3 +1,4 @@
+
 package ewm.dto.compilation;
 
 import jakarta.validation.constraints.NotBlank;

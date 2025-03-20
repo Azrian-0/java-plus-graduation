@@ -1,7 +1,5 @@
 package ewm.event.model;
 
-import ewm.category.model.Category;
-import ewm.enums.EventState;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,12 +30,9 @@ public class Event {
     private EventState state;
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    private Long category;
 
-    @JoinColumn(name = "user_id")
-    private Long initiatorId;
+    private Long initiator;
 
     private Double lat;
     private Double lon;

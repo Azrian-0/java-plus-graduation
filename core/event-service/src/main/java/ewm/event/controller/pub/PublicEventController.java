@@ -1,16 +1,13 @@
 package ewm.event.controller.pub;
 
-import ewm.dto.event.PublicGetEventRequestDto;
-import ewm.dto.event.UpdatedEventDto;
-import ewm.event.EventService;
+import ewm.event.dto.EventDto;
+import ewm.event.dto.PublicGetEventRequestDto;
+import ewm.event.service.EventService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,18 +15,39 @@ import java.util.List;
 @Validated
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("events")
+@RequestMapping("/events")
 public class PublicEventController {
-	private final EventService eventService;
+    private final EventService eventService;
 
-	@GetMapping
-	public List<UpdatedEventDto> publicGetEvents(HttpServletRequest request, PublicGetEventRequestDto requestParams) {
-		log.info("Получить события, согласно устловиям -> {}", requestParams);
-		return eventService.publicGetEvents(requestParams, request);
-	}
+    @GetMapping
+    public List<EventDto> publicGetEvents(HttpServletRequest request, PublicGetEventRequestDto requestParams) {
+        log.info("Получить события, согласно устловиям -> {}", requestParams);
+        return eventService.publicGetEvents(requestParams, request);
+    }
 
-	@GetMapping("/{id}")
-	public UpdatedEventDto publicGetEvent(@PathVariable Long id, HttpServletRequest request) {
-		return eventService.publicGetEvent(id, request);
-	}
+    @GetMapping("/{id}")
+    public EventDto publicGetEvent(@PathVariable Long id,
+                                   HttpServletRequest request) {
+        return eventService.publicGetEvent(id, request);
+    }
+
+    @GetMapping("/public/{eventId}")
+    public EventDto getById(@PathVariable Long eventId) {
+        return eventService.getEventById(eventId);
+    }
+
+    @PutMapping("/{id}")
+    EventDto updateEvent(@PathVariable Long id, @RequestBody EventDto event) {
+        return eventService.update(id, event);
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public List<EventDto> findAllByCategoryId(@PathVariable Long categoryId) {
+        return eventService.findAllByCategoryId(categoryId);
+    }
+
+    @GetMapping("/public")
+    public List<EventDto> findAllByIds(@RequestParam List<Long> ids) {
+        return eventService.findAllByIds(ids);
+    }
 }
